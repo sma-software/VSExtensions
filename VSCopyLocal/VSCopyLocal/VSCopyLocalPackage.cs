@@ -7,8 +7,11 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using VSUtils;
 using VSUtils.Project;
+using Microsoft.VisualStudio;
+using Task = System.Threading.Tasks.Task;
 
 namespace CodeValue.VSCopyLocal
 {
@@ -24,15 +27,15 @@ namespace CodeValue.VSCopyLocal
     /// </summary>
     // This attribute tells the PkgDef creation utility (CreatePkgDef.exe) that this class is
     // a package.
-    [PackageRegistration(UseManagedResourcesOnly = true)]
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     // This attribute is used to register the information needed to show this package
     // in the Help/About dialog of Visual Studio.
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(GuidList.GuidVsPackageTemplatePkgString)]
     [ProvideOptionPage(typeof(OptionsPage), "VSCopyLocal", "Settings", 0, 0, true)]
-    [ProvideAutoLoad("{f1536ef8-92ec-443c-9ed7-fdadf150da82}")] //SolutionExists
-    public sealed class VSCopyLocalPackage : Package
+    [ProvideAutoLoad(VSConstants.UICONTEXT.SolutionExists_string, PackageAutoLoadFlags.BackgroundLoad)]
+    public sealed class VSCopyLocalPackage : AsyncPackage
     {
         private static DTE _dte;
         private static OptionsPage _options;
@@ -46,12 +49,11 @@ namespace CodeValue.VSCopyLocal
             get { return "VSCopyLocal"; }
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress) {
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
             // Add our command handlers for menu (commands must exist in the .vsct file)
-            var mcs = GetService(typeof (IMenuCommandService)) as OleMenuCommandService;
+            var mcs = await GetServiceAsync(typeof (IMenuCommandService)) as OleMenuCommandService;
             if (null == mcs) return;
 
             // Solution level command
