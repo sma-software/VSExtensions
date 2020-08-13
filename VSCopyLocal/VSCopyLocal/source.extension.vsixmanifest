@@ -8,9 +8,9 @@
         <Tags>Visual Studio Copy Local CopyLocal Reference References</Tags>
     </Metadata>
     <Installation AllUsers="true">
-        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 17.0)" />
-        <InstallationTarget Version="[17.0,17.0)" Id="Microsoft.VisualStudio.Pro" />
-        <InstallationTarget Version="[17.0,17.0)" Id="Microsoft.VisualStudio.Enterprise" />
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0, 17.0)" />
+        <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Pro" />
+        <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Enterprise" />
     </Installation>
     <Dependencies>
     </Dependencies>
